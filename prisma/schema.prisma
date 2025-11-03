@@ -1,0 +1,52 @@
+generator client {
+  provider      = "prisma-client"
+  output        = "../src/db/prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  telegramId Int      @unique
+  username   String?
+  firstName  String?
+  language   String?  @default("ru")
+  timezone   String?  @default("Europe/Moscow")
+  createdAt  DateTime @default(now())
+
+  products  Product[]
+  reminders Reminders[]
+}
+
+model Product {
+  id         Int      @id @default(autoincrement())
+  name       String
+  expireDate DateTime
+  category   String?
+  imageUrl   String?
+  isExpired  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  userId    Int
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reminders Reminders[]
+
+  @@unique([name, userId])
+}
+
+model Reminders {
+  id        Int      @id @default(autoincrement())
+  jobKey    String   @unique
+  createdAt DateTime @default(now())
+  remindAt  DateTime
+  isActive  Boolean  @default(true)
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
