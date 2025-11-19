@@ -99,6 +99,7 @@ class ProductService {
     async getUserProductForList(telegramId: number) {
         const list = await prismaClient.product.findMany({
             where: { user: { telegramId } },
+            orderBy: { expireDate: "desc" },
             select: {
                 user: { select: { timezone: true } },
                 name: true,
