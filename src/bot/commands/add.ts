@@ -17,6 +17,7 @@ export const addCommand = (bot: TelegramBot) => {
                 const productNames = await productService.getLastUserProducts(
                     message.from.id
                 );
+                console.log(productNames);
                 await bot.sendMessage(
                     message.chat.id,
                     `Напиши что хочешь добавить${

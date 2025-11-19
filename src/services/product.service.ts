@@ -86,7 +86,7 @@ class ProductService {
 
     getLastUserProducts(
         telegramId: number,
-        count: number = 8
+        count: number = 16
     ): Promise<{ name: string; id: number }[]> {
         return prismaClient.product.findMany({
             where: { user: { telegramId } },
