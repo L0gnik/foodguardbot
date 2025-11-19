@@ -58,7 +58,27 @@ services:
         restart: unless-stopped
         networks:
             - internal
-
+    pg-backup:
+        image: postgres:15-alpine
+        container_name: database-postgres-backup
+        depends_on:
+            - postgres
+        environment:
+            POSTGRES_USER: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DB: ${DB_NAME}
+        volumes:
+            - ./backups:/backup
+        entrypoint: >
+            sh -c "export PGPASSWORD=$DB_PASSWORD;
+                  while true; do
+                    pg_dump -h postgres -U $DB_USER $DB_NAME > /backup/db-$(date +%F-%H-%M-%S).sql;
+                    echo 'Backup created at /backup/db-$(date +%F-%H-%M-%S).sql';
+                    sleep 86400;
+                  done"
+        networks:
+            - internal
+        restart: unless-stopped
 volumes:
     postgres_data:
     redis_data:
