@@ -4,6 +4,7 @@ services:
     bot:
         build: .
         container_name: foodguard_bot
+        restart: unless-stopped
         depends_on:
             - redis
             - postgres
